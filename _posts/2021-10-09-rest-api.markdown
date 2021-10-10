@@ -1,0 +1,195 @@
+---
+layout: single
+title:  "Wyciąganie danych przez REST API"
+date:   2021-10-09 14:16:43 +0200
+categories: jekyll update
+---
+
+Data scientists w swojej pracy korzystają z różnorodnych źródeł danych. Przypuszczalnie jednym z najpopularniejszy są relacyjne bazy danych, które zapewniają łatwy oraz szybki dostęp do potrzebnych danych. W większości przypadków dostęp do takich baz danych mają jedynie pracownicy danej organizacji. Czasami niektóre organizacje udostępniają swoje dane podmiotom zewnętrznym. Wówczas dostęp do takich zasobów ma miejsce z reguły za pomocą specjalnie przeznaczonego do tego interfejsu REST API.
+
+Czym jest REST API i jak z niego korzystać? W niniejszym tekście postaramy się odpowiedzieć na te pytania. W zaprezentowanych przykładach wykorzystamy API udostępnione przez portal wykop.pl[^1]. Dodatkowo stworzymy prostą klasę w Pythonie, która ułatwi nam dostęp do interesujących nas danych.
+
+Wszystkie skrypty oraz kody wykorzystane w tekście dostępne są w repozytorium [GitHub](https://github.com/dsinaction/wykop-tags).
+
+## REST API
+
+Korzystając na co dzień z komputera lub telefonu, bez przerwy wykorzystujemy różnego rodzaju interfejsy. Tymi najpopularniejszymi są bez wątpienia interfejsy użytkownika (ang. User Interface), dzięki którym w prosty sposób możemy wydawać określone polecenia różnym aplikacją. Równie popularne są tzw. interfejsy programistyczne (ang. Programming Interface). Z reguły nie mamy z nimi bezpośrednio do czynienia, jednak stanowią one podstawę funkcjonowania wielu systemów oraz serwisów internetowych, z których codziennie korzystamy.
+
+**API** (ang. Application Programming Interface) jest to interfejs programistyczny, który definiuje sposób, w jaki programy mogą się ze sobą komunikować. Wykorzystanie interfejsów API umożliwia m.in. podział dużego systemu na mniejsze usługi, które specjalizują się w jakimś konkretnym obszarze. Taka architektura jest bardzo elastyczna oraz umożliwia rozwijanie poszczególnych komponentów bez większego wpływu na pozostałe elementy systemu.
+
+Przykładową usługą może być np. silnik predykcyjny, którego głównym zadaniem jest przeliczanie modelu uczenia maszynowego dla zadanych danych wejściowych. Z drugiej strony możemy mieć silnik decyzyjny, który komunikuje się z silnikiem predykcyjnym poprzez udostępnione API. Silnik decyzyjny przesyła dane wejściowe oraz oczekuje odpowiedzi zawierającej wynik działania modelu. W takim systemie, w dowolnej chwili możemy zaktualizować parametry modelu bez konieczności wprowadzania dodatkowych zmian w silniku decyzyjnym.
+
+<img src="{{site.url}}/assets/images/posts/restapi/api-request-response-1024x207.png" style="display: block; margin: auto;" />
+
+Istnieje wiele rodzajów interfejsów API. Obecnie bardzo popularne są interfejsy **REST API**, i to właśnie na nich skupimy się w tym tekście. Interfejsy tego typu komunikują się z wykorzystaniem protokołu **HTTP**, który wykorzystywany jest również w komunikacji pomiędzy serwerami www oraz przeglądarkami internetowymi. Komunikacja odbywa się na podstawie żądań oraz odpowiedzi.
+
+Każde żądanie powiązane jest z określonym zasobem, który ma swój unikalny identyfikator – **URI** (ang. Uniform Resource Identifier). Sam protokół HTTP nie precyzuje, czym dokładnie jest zasób. Określa jedynie sposób, w jaki można dostać się do zasobów. Istotnym elementem żądania są również nagłówki (ang. headers), które często wykorzystywane są m.in. do przesłania informacji identyfikujących potrzebnych do autoryzacji.
+
+Odpowiedzi zwracane przez serwer mogą być niemal dowolnego formatu. W przypadku REST API najpopularniejszymi formatami są **JSON** oraz **XML**. Dodatkowo wykorzystuje się powszechnie kody statusu HTTP, gdzie np. 200 wskazuję, że wszystko jest w porządku i żądanie zostało poprawnie wykonane. Natomiast popularne 404 określa, że dany zasób nie istnieje.
+
+W ramach protokołu HTTP możemy wyróżnić kilka typów żądań/metod, które określają jaką akcję chcemy wykonać na danym zasobie. Najczęściej wykorzystywaną metodą jest **GET**, która służy do pobrania określonych danych. Inne dostępne metody to m.in. **POST**, **DELETE**, **HEAD**.
+
+## wykop.pl API
+
+Dokumentacja API dostępna jest pod adresem [https://www.wykop.pl/dla-programistow/apiv2docs/](https://www.wykop.pl/dla-programistow/apiv2docs/). Zawiera ona listę dostępnych zasobów wraz z parametrami, które musimy przekazać. W przypadku tego API, parametry definiujemy w ramach URI zasobu. Nie jest to normą, dlatego korzystając z innych API, należy dokładnie zapoznać się z ich dokumentacją.
+
+Na rysunku poniżej możemy zobaczyć opis przykładowego zasobu.
+
+<img src="{{site.url}}/assets/images/posts/restapi/api-example.png" style="display: block; margin: auto;" />
+
+Korzystając z tego zasobu, możemy pobrać najlepsze znaleziska. Jako parametry musimy zdefiniować *year* oraz *month*. Przykładowo, wysyłając żądanie na *https://a2.wykop.pl/Links/Top/2012/2/*, otrzymamy znaleziska z lutego 2012.
+
+Kolejnym ważnym elementem przy korzystaniu z REST API jest autoryzacja. Nie wszędzie jest ona wymagana. W przypadku *wykop.pl* musimy uzyskać odpowiedni klucz, który następnie przesyłamy wraz z każdym żądaniem. Po zalogowaniu się do serwisu, możemy go uzyskać w sekcji ‘*Uzyskaj dostęp do API*’ ([https://www.wykop.pl/dla-programistow/nowa-aplikacja/](https://www.wykop.pl/dla-programistow/nowa-aplikacja/)). Klucza API podobnie jak pozostałe parametry przekazujemy w URI. Musimy dodać do adresu zasobu parametr appkey, np. *https://a2.wykop.pl/Links/Top/2012/2/appkey/dsinaction*.
+
+### Przykłady wykorzystania REST API
+
+W zaprezentowanych przykładach korzystamy ze zmiennej środowiskowej *WYKOP_API_KEY*, która przechowuje nasz klucz.
+
+#### Najlepsze znaleziska z danego miesiąca
+
+| ----------- | ----------- |
+| URI | https://a2.wykop.pl/Hits/Month/year/month/ |
+| Sample request | GET https://a2.wykop.pl/Hits/Month/2012/5/appkey/$WYKOP_API_KEY | 
+
+#### Komentarze do danego znaleziska
+
+| ----------- | ----------- |
+| URI | https://a2.wykop.pl/Links/Comments/sort/string/link/ |
+| Sample request | GET https://a2.wykop.pl/Links/Comments/1021083/appkey/$WYKOP_API_KEY | 
+
+#### Aktywne wpisy
+
+| ----------- | ----------- |
+| URI | https://a2.wykop.pl/Entries/Active/page/int/ |
+| Sample request | GET https://a2.wykop.pl/Entries/Active/page/1/appkey/$WYKOP_API_KEY |
+
+## REST API & Python
+
+Nic nie stoi na przeszkodzie, abyśmy pobierali dane poprzez REST API bezpośrednio do Pythona. W tym celu możemy skorzystać z biblioteki requests. Wykonując metodę get oraz przekazując jako parametr URI zasobu, otrzymamy odpowiedź z danymi.
+
+```python
+import os
+import requests
+
+api_key = os.environ.get('WYKOP_API_KEY')
+uri = f'https://a2.wykop.pl/Hits/Month/2012/5/appkey/{api_key}'
+
+response = requests.get(uri)
+data = response.json()
+```
+
+W przypadku jednorazowego pobrania danych powyższy kod powinien w zupełności wystarczyć. Czasami jednak wykorzystanie REST API stanowi istotny element naszego projektu. W takiej sytuacji warto przygotować dedykowany moduł lub klasę, która będzie odpowiadała za komunikację z API. W takiej klasie poszczególne metody mogą odpowiadać za obsługę żądań do konkretnych URI. Dodatkowo parametry metod mogę przekładać się bezpośrednio na parametry poszczególnych żądań. Poniżej możemy zobaczyć przykładową klasę *WykopAPI*, która służy do pobierania danych z *wykop.pl*. Obsługuje ona trzy URI, jednak bardzo łatwo można ją rozszerzyć o kolejne.
+
+```python
+class WykopAPI:
+    '''
+    API Client for wykop.pl's API.
+    API documentation: https://www.wykop.pl/dla-programistow/apiv2docs/
+    '''
+
+    api_url = 'https://a2.wykop.pl/'
+    urls = {
+        'hits_month': '{api_url}Hits/Month/{year}/{month}/appkey/{api_key}/page/{page}/',
+        'top_links': '{api_url}Links/Top/{year}/{month}/appkey/{api_key}',
+        'link_comments': '{api_url}Links/Comments/{link_id}/appkey/{api_key}',
+    }
+
+    def __init__(self, api_key, secret_key = None):
+        self.api_key = api_key
+        self.secret_key = secret_key
+        self.session = requests.Session()
+
+    def get_top_links(self, year, month):
+        '''Get top links'''
+        url = self._get_url('top_links', year=year, month=month)
+        return self.get(url)
+
+    def get_comments(self, link_id):
+        '''Get link comment'''
+        url = self._get_url('link_comments', link_id=link_id)
+        return self.get(url)
+
+    def get_hits_month(self, year, month, page):
+        '''Get best links of selected month'''
+        url = self._get_url('hits_month', year=year, month=month, page=page)
+        return self.get(url)
+
+    def get(self, url):
+        response = self.session.get(url)
+        response.raise_for_status()
+        data = response.json()
+        self._raise_if_error(data)
+        return data
+
+    def _get_url(self, url_id, **kwargs):
+        url = self.urls[url_id]
+        return url.format(api_url=self.api_url, api_key=self.api_key, **kwargs)
+
+    def _raise_if_error(self, data):
+        if 'error' in data:
+        err = data['error']
+        raise WykopAPIError(err['message_en'], err['code'])
+```
+
+Wykorzystanie WykopAPI jest bardzo intuicyjne. Ponadto znacznie poprawia czytelność kodu i ułatwia jego zrozumienie, co ma bardzo duże znacznie przy większych projektach. Poniżej przykład.
+
+```python
+from wykop.api import WykopAPI
+
+api_key = os.environ.get('WYKOP_API_KEY')
+api = WykopAPI(api_key)
+
+links = api.get_hits_month(year=2020, month=10, page=1)
+```
+
+Z reguły, aby pobrać wszystkie dostępne dane, będziemy musieli wielokrotne odpytać REST API. Wymagać to może wskazania w następnym żądaniu kolejnej strony (np. page=2) lub ustawienia innych parametrów, wszystko zależy od konkretnego API. Warto w takiej sytuacji stworzyć dodatkowy skrypt, którego zadaniem będzie pobranie wszystkich niezbędnych danych. Stworzyliśmy taki przykładowy skrypt (bin/download_hits.py), który pobiera wszystkie popularnych znalezisk z danego miesiąca oraz zapisuje je we wskazanej lokalizacji. Każde znalezisko zostanie zapisane w oddzielnym pliku json, gdzie nazwa to id znaleziska. Skrypt ten znajduje się w repozytorium projektu.
+
+```bash
+usage: download_hits.py [-h] year month dest apikeys [apikeys ...]
+
+Download wykop.pl monthly hits links.
+
+positional arguments:
+  year        Year
+  month       Month
+  dest        Destination directory
+  apikeys     Application keys
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+Poniżej przykładowe wywołanie. Chcemy pobrać najpopularniejsze znaleziska z 2012-2 oraz zapisać je w folderze links.
+
+```bash
+./bin/download_hits.py 2012 2 links $WYKOP_API_KEY
+```
+
+```bash
+INFO:__main__:Fetching links for 2012-2 and 1 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 2 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 3 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 4 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 5 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 6 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 7 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 8 page ...
+INFO:__main__:Saved 25 new links.
+INFO:__main__:Fetching links for 2012-2 and 9 page ...
+INFO:__main__:Saved 25 new links.
+```
+
+Po kilku minutach powinniśmy pobrać wszystkie znaleziska z danego okresu. Możemy to samo poleceni wywołać dla innych miesięcy. W kolejnym kroku możemy wykorzystać te dane jako źródło do naszej analizy.
+
+## Podsumowanie
+
+Wykorzystanie danych dostępnych przez REST API wymaga z reguły więcej pracy niż w przypadku korzystania z relacyjnych baz danych. Jednak dostęp do wielu publicznych zbiorów danych jest możliwy często jedynie przez właśnie takie API. Sposób, w jaki korzystamy z REST API w dużej mierze zależy od tego, jak zostało ono zaprojektowane. Stąd pierwszym krokiem w pracy z REST API powinno być zapoznanie się z odpowiednią dokumentacją. Warto zastanowić się na utworzeniem dedykowanej klasy do komunikacji z API, w szczególności, kiedy jest to istotny element naszego projektu. Dodatkowo taką klasę zawsze możemy wykorzystać w innych projektach.
+
+[^1]: Polski serwis internetowy z kategorii tzw. social news, istniejący od 28 grudnia 2005. W założeniu jest on odpowiednikiem amerykańskiego Reddita oraz digg.com. Ideą wykop.pl jest odnajdywanie interesujących informacji w Internecie i przedstawianie ich innym użytkownikom (źródło: [Wikipedia](https://pl.wikipedia.org/wiki/Wykop.pl)).
