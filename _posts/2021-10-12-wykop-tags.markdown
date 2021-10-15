@@ -7,7 +7,7 @@ categories: jekyll update
 
 <img src="{{site.url}}/assets/images/posts/wykoptags/logo_wykop_500.png" style="display: block; margin: auto;" />
 
-Analiza najpopularniejszych znalezisk z ostatnich lat.
+**wykop.pl**[^1] jest jednym z popularniejszych serwisów społecznościowych w Polsce ([żródło](https://www.wirtualnemedia.pl/artykul/tiktok-ma-w-polsce-wiecej-uzytkownikow-niz-twitter-pinterest-przed-snapchatem-i-wykopem-top10)). Idea serwisu opiera się na tzw. znaleziskach, czyli informacjach, które są dodawane, oceniane i komentowane przez użytkowników. Znaleziska z największą liczbą dodatnich głosów (tzw. wykopów) trafiają na stronę główną. *wykop.pl* udostępnia swoje dane poprzez publiczne REST API, o czym pisaliśmy w jednym z poprzednich [tekstów](). Wykorzystując zebrane dane, postanowilismy przeanalizować najpopularniejsze znalezisk z ostatnich lat. W tekście przedstawiamy wyniki naszej analizy.
 
 ## Pobranie Danych
 
@@ -44,12 +44,12 @@ Każde znaleziska opatrzone jest listą tagów, które opisują mniej więcej te
 
 W pierwszej kolejności porównamy najpopularniejsze tagi dla dwóch skrajnych lat, 2008 oraz 2021. Na rysunku 2 przedstawiono wykres słupkowy zawierający informację o tym jaki procent wszystkich najpopularniejszych znalezisk z danego roku posiadało dany tag. Wykorzystano 10 najpopularniejszych tagów z obydwu lat.
 
-Już na pierwszy rzut oka widać wyraźne różnicę pomiędzy obydwoma latami. Przede wszystkim pojawiło się wiele nowych tagów, które w 2008 wogóle nie występowały. Jednym z nich jest *#koronawirus*, co wydaje się uzasadnione. Inne nowe tagi to *#bekazpisu* oraz *#neuropa*. Dodatkowo kilka tagów zyskało dużo wiekszą popularność jak np. *#polska* (wzrost z 20.37% do 53.11%), *#polityka* (wzrost z 2.2% do 14.22%) oraz *#ciekawostki* (wzrost z 9.51% do 18.79%). Z drugiej strony, w 2021 tag *#nowetechnologie* w ogóle nie występował, chociaż w 2008 ok. 11% wszystkich znalezisk go posiadało. Duży spadek zaliczyły takie tagi jak *#humor* (spadek z 32.47% do 0.66%), *#internet* (spadek z 6.71% do 1.03%) oraz *#matematyka* (spadek z 6.28% do 0.1%). W 2008 jednymi z popularniejszych znalezisk były te, które dotyczyły matematyki! W przypadku niektórych tagów różnica pomiędzy analizowanymi latami jest nieznaczna, jak np. *#nauka* (7.49% w 2008 oraz 6.24% w 2021) lub *#swiat* (15.88% w 2008 oraz 16.87% w 2021).
-
 <figure>
     <figcaption>Rysunek 2. Udział znalezisk opatrzonych wybranymi tagami w 2008 oraz 2021.</figcaption>
     <img src="{{site.url}}/assets/images/posts/wykoptags/popular_tags_shift.png" style="display: block; margin: auto;" />
 </figure>
+
+Już na pierwszy rzut oka widać wyraźne różnicę pomiędzy obydwoma latami. Przede wszystkim pojawiło się wiele nowych tagów, które w 2008 wogóle nie występowały. Jednym z nich jest *#koronawirus*, co wydaje się uzasadnione. Inne nowe tagi to *#bekazpisu* oraz *#neuropa*. Dodatkowo kilka tagów zyskało dużo wiekszą popularność jak np. *#polska* (wzrost z 20.37% do 53.11%), *#polityka* (wzrost z 2.2% do 14.22%) oraz *#ciekawostki* (wzrost z 9.51% do 18.79%). Z drugiej strony, w 2021 tag *#nowetechnologie* w ogóle nie występował, chociaż w 2008 ok. 11% wszystkich znalezisk go posiadało. Duży spadek zaliczyły takie tagi jak *#humor* (spadek z 32.47% do 0.66%), *#internet* (spadek z 6.71% do 1.03%) oraz *#matematyka* (spadek z 6.28% do 0.1%). W 2008 jednymi z popularniejszych znalezisk były te, które dotyczyły matematyki! W przypadku niektórych tagów różnica pomiędzy analizowanymi latami jest nieznaczna, jak np. *#nauka* (7.49% w 2008 oraz 6.24% w 2021) lub *#swiat* (15.88% w 2008 oraz 16.87% w 2021).
 
 **Mamy do czynienia z wyraźnym przesunięciem tematyki najpopularniejszych znalezisk z obszarów związanych z humorem, nowymi technologiami i Internetem do obszarów dotyczących polityki oraz ogólnie wydarzeń mających miejsce w naszym kraju**. W dużej mierze związane jest to zapewne ze zmianą profilu typowego użytkownika serwisu. Możemy postawić hipotezę, że w 2008 był to prawdopodobnie dwudziestoparoletni mężczyzna zainteresowany nowymi technologiami. Z kolei w 2021 jest to raczej trzydziesto-czterdziestoletni mężczyzna lub kobieta, interesujacy się polityką oraz bieżącymi wydareniami. Czyżby użytkownicy *wykop.pl* zwyczajnie dorośli?
 
@@ -82,3 +82,41 @@ Na zakońcnie tej sekcji, sporządzimy listę tagów, które miały swoje 5 minu
     <figcaption>Tabela 2. Krótkotrwale popularne tagi.</figcaption>
     <img src="{{site.url}}/assets/images/posts/wykoptags/tags-events.png" style="display: block; margin: auto;" />
 </figure>
+
+#### Najpopularniejsze źródła
+
+Każde znalezisko posiada swoje źródło. Tabela 3 zawiera dane na temat udziału znalezisk z najpopularniejszych źródeł w latach 2006-2021.
+
+<figure>
+    <figcaption>Tabela 3. Udział znalezisk z danego źródła w latach 2006-2021 (z wyłączniem *wykop.pl* oraz *youtube.com*).</figcaption>
+    <img src="{{site.url}}/assets/images/posts/wykoptags/popular-sources.png" style="display: block; margin: auto;" />
+</figure>
+
+**Najpopularniejszymi źródłami są bezsprzecznie *wykop.pl* (treści przygotowane przez użytkowników) oraz *youtube.com***. To pierwsze odpowiadało za ok. 19% najpopularniejszych znalezisk w latach 2020-2021. Natomiast *youtube.com* za ok. 15.5%. Trzecie miejsce przypadło platformie *stremable.com*, której udział dynamiczne wzrósł w ostatnich latach. Popularny jest również *twitter.com* z udziałem ok 2.5%. Pozostałe źródła nie przekraczają 2% udziału. Spośród nich popularne są przede wszystkim serwisy informacyjne jak np. *tvn24.pl*, *onet.pl*, *money.pl* lub *polsatnews.pl*. Jeżeli chodzi o źródła, które utraciły swoje znaczenie, to mamy tutaj przede wszystkim *pokazywarka.pl*, która w latach 2009-2011 odpowiadała za ok 4.5% najpopularniejszych znalezisk. Podobnie źródło *liveleak.com*, które w swoich szczytowych latach 2013-2014 obejmowało ok. 2.5% znalezisk.
+
+#### Użytkownicy z największa liczbą popularnych znalezisk
+
+
+#### Popularne słowa w tytule
+
+Techniką, która pozwala w graficzny sposób zobrazować popularne i często występujące słowa, jest tzw. chmura wyrazów (ang. word cloud). Powstały obraz składa się z popularnych wyrazów, których wielkość jest zależna od częśtosci ich wystąpień. Rysunki [] oraz [] przedstawiają chmury wyrazów dla lat 2008 oraz 2021.
+
+<figure>
+    <figcaption>Rysunek. Popularne słowa w tytułach znaleziska z 2008 (chmura słów).</figcaption>
+    <img src="{{site.url}}/assets/images/posts/wykoptags/wordcloud_2008.png" style="display: block; margin: auto;" />
+</figure>
+
+
+<figure>
+    <figcaption>Rysunek. Popularne słowa w tytułach znaleziska z 2021 (chmura słów).</figcaption>
+    <img src="{{site.url}}/assets/images/posts/wykoptags/wordcloud_2021.png" style="display: block; margin: auto;" />
+</figure>
+
+Słowami, które rzucają się w oczy w 2008 są: google, pic, polska, świecie, wykop reklama.
+Słowami, które rzucają się w oczy w 2021 sa: polska, policja, usa, rząd, covid.
+
+### Podsumowanie
+
+
+
+[^1]: Polski serwis internetowy z kategorii tzw. social news, istniejący od 28 grudnia 2005. W założeniu jest on odpowiednikiem amerykańskiego Reddita oraz digg.com. Ideą wykop.pl jest odnajdywanie interesujących informacji w Internecie i przedstawianie ich innym użytkownikom (źródło: [Wikipedia](https://pl.wikipedia.org/wiki/Wykop.pl)).
