@@ -1,9 +1,9 @@
 ---
 layout: single
 title:  "AdaBoost"
-date:   2021-10-27 00:00:00 +0200
-categories: jekyll update
-excerpt: "**Boosting** jest to rodzina algorytmów powszechnie wykorzystywanych w ramach uczenia maszynowego (ang. machine learning). Jednym z klasycznych algorytmów tego typu jest **AdaBoost**. W tekście opisujemy działanie algorytmu oraz przedstawiamy prostą implementację w Python."
+date:   2021-11-08 00:00:00 +0200
+categories: dsta-science machine-learning
+excerpt: "**Boosting** jest to rodzina algorytmów powszechnie wykorzystywanych w ramach uczenia maszynowego. Jednym z klasycznych algorytmów tego typu jest **AdaBoost**. W tekście opisujemy działanie algorytmu oraz przedstawiamy prostą implementację w Python."
 ---
 
 **Boosting** jest to rodzina algorytmów powszechnie wykorzystywanych w ramach uczenia maszynowego (ang. machine learning). W odróżnieniu od np. modelu regresji logistycznej czy drzew decyzyjnych *boosting* sam w sobie nie stanowi modelu w klasycznym rozumieniu tego słowa. Boosting jest przykładem rodziny tzw. **ensemble method**. Najogólniej rzecz ujmując, są to metody łączenia wielu modeli uczenia maszynowego w jeden finalny model. Innym przykładem rodziny tego typu jest np. **Bagging**, do której zalicza się m.in. **Random Forest**. Z kolei najpopularniejszym przedstawicielem algorytmu z rodziny **boosting** jest **XGBoost** - **Extreme Gradient Boosting**. XGBoost zawdzięcza dużą popularność przede wszystkim swojej wysokiej skuteczności, wygrywając niejednokrotnie nawet z głębokimi sieciami neuronowymi (ang. deep learning), zwłaszcza w przypadku danych tabelarycznych[^1].

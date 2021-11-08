@@ -2,7 +2,7 @@
 layout: single
 title:  "wykop.pl - Analiza znalezisk"
 date:   2021-10-17 00:00:00 +0200
-categories: jekyll update
+categories: data-science
 excerpt: "**wykop.pl** jest jednym z popularniejszych serwisów społecznościowych w Polsce. W tekście przedstawiamy wyniki analizy treści publikowanych przez użytowników."
 ---
 

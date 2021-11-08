@@ -2,7 +2,7 @@
 layout: single
 title:  "Apache Spark & Docker – Local Cluster Mode"
 date:   2021-10-09 14:16:43 +0200
-categories: jekyll update
+categories: data-engineering
 ---
 
 **Apache Spark** is a platform for processing large volumes of data in a distributed manner. Lack of access to a computer cluster seems for many people interested in learning Spark as an impassable obstacle. But fortunately that's not the case. We can successfully learn Apache Spark on our local machine. We can use the so called local mode. Another approach is based on using Docker and emulating a cluster with simple containers.

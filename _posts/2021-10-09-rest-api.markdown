@@ -2,7 +2,7 @@
 layout: single
 title:  "Wyciąganie danych przez REST API"
 date:   2021-10-09 14:16:43 +0200
-categories: jekyll update
+categories: data-science data-engineering
 ---
 
 Data scientists w swojej pracy korzystają z różnorodnych źródeł danych. Przypuszczalnie jednym z najpopularniejszy są relacyjne bazy danych, które zapewniają łatwy oraz szybki dostęp do potrzebnych danych. W większości przypadków dostęp do takich baz danych mają jedynie pracownicy danej organizacji. Czasami niektóre organizacje udostępniają swoje dane podmiotom zewnętrznym. Wówczas dostęp do takich zasobów ma miejsce z reguły za pomocą specjalnie przeznaczonego do tego interfejsu REST API.
