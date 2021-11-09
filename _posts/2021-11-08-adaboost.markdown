@@ -2,7 +2,7 @@
 layout: single
 title:  "AdaBoost"
 date:   2021-11-08 00:00:00 +0200
-categories: dsta-science machine-learning
+categories: data-science machine-learning
 excerpt: "**Boosting** jest to rodzina algorytmów powszechnie wykorzystywanych w ramach uczenia maszynowego. Jednym z klasycznych algorytmów tego typu jest **AdaBoost**. W tekście opisujemy działanie algorytmu oraz przedstawiamy prostą implementację w Python."
 ---
 
@@ -32,6 +32,19 @@ Podczas uczenia pierwszego modelu, wagi wszystkich obserwacji mają identyczną 
 
 W metodach opartych o łączenie wielu modeli do ustalenia finalnej predykcji wykorzystywany jest z reguły mechanizm głosowania. Modele bazowe na podstawie swoich predykcji głosują na poszczególne klasy (np. spam, nie spam). Następnie jako finalną predykcję ustala się klasę, która otrzymała najwięcej głosów. Podobny mechanizm wykorzystywany jest przez AdaBoost. Jedyna modyfikacja polega na ważeniu głosów poszczególnych klasyfikatorów. Głosy ważone są za pomocą wag przypisanym klasyfikatorom, o których wspominaliśmy powyżej. Modele z większymi wagami będą miały większy wpływ na finalną predykcję.
 
+Algorytm AdaBoost nie jest skomplikowany. Korzystając z pseudokodu możemy zapisać go w kilku krokach.
+
+1. Zainicuj początkowe wagi obserwacji
+2. Powtórz $$N$$ razy:
+    1. Wytrenuj klasyfikatora
+    2. Oblicz błąd klasyfikatora
+    3. Oblicz wagę klasyfikatora
+    4. Zaktualizuj wagi obserwacji
+    5. Zapisz klasyfikator oraz jego wagę
+3. Wygeneruj finalną predykcję wykorzystując ważone głosowanie
+
+Bardziej szczegółowy opis powyższych kroków znajduje się w kolejnej części tekstu.
+
 ### AdaBoost - Zapis Matematyczny
 
 Niech $$\{ ({\bf x_i }, y_i) \}_{i=1}^{N}$$ będzie zbiorem uczącym zawierającym $$N$$ obserwacji. Każda obserwacja $$({\bf x }, y)$$ złożona jest z wektora zmiennych $${\bf x }$$ oraz zmiennej celu $$y$$, która przyjmuje wartości ze zbioru $$\{-1, 1\}$$. Wynikiem działania algorytmu jest $$M$$ słabych klasyfikatorów $$G_m(x)$$, których predykcje łączone są poprzez ważone głosowanie zgodnie z poniższą formułą:
@@ -40,7 +53,31 @@ $$G(x) = sign \left( \sum_{i=1}^{M} \alpha_m G_m(x) \right)$$,
 
 gidze $$\alpha_m$$ to waga $$m$$-tego klasyfikatora.
 
-Dla zobrazowania pojedynczej iteracji algorytmu wykorzystamy losowo wygenerowany zbiór danych złożony z 10 obserwacji. Zawiera on dwie zmienne objaśniające: *x1* i *x2* oraz zmienną celu *y*. Tabela 1 zawiera wartości wszystkich zmiennych. Z kolei na rysunku 1 przedstawiono obserwacje w podziale na klasy (1 - niebieski, -1 - czerwony).
+1. Inicializacja wag wszystkich obserwacji identyczną wartością $$w_i = 1/N, i = 1, 2, . . . , N$$
+2. Pętla $$m = 1\ ...\ M$$:
+    1. Uczenie klasyfikatora $$G_m(x)$$ na próbie uczącej ważonej wagami $$w_i$$.
+    2. Obliczenie błędu klasfyikatora:
+
+        $$err_m = \sum_{i=1}^{N} w_i I(y_i \neq G_m(x)_i)$$
+        $$I(y_i \neq G_m(x_i)) =
+        \begin{cases}
+            1 & y_i \ne G_m(x_i) \\
+            0 & y_i = G_m(x_i)
+        \end{cases}$$
+
+    3. Obliczenie wagi klasyfikatora
+
+        $$\alpha_m = \frac{1}{2} \log \frac{1 - err_m}{err_m}$$
+
+    4. Akutalizacja wartości wag obserwacji
+
+        $$w_i = w_ie^{-\alpha_m y_i G_m(x_i)}, i = 1, 2, ..., N$$
+
+    5. Normalizacja wag obserwacji
+
+        $$w_i = \frac{w_i}{\sum_{i=1}^{N} w_i}, i = 1, 2, ..., N$$
+
+W dalszej części tekstu omówimi dokładnie poszczególne kroki algorytmu. Dla zobrazowania pojedynczej iteracji wykorzystamy losowo wygenerowany zbiór danych złożony z 10 obserwacji. Zawiera on dwie zmienne objaśniające: *x1* i *x2* oraz zmienną celu *y*. Tabela 1 zawiera wartości wszystkich zmiennych. Z kolei na rysunku 1 przedstawiono obserwacje w podziale na klasy (1 - niebieski, -1 - czerwony).
 
 <figcaption>Tabela 1. Losowo wygenerowany zbiór danych.</figcaption>
 
@@ -148,7 +185,7 @@ W naszym obecnym przykładzie, błąd klasyfikatora wyniósł 0.2. Stąd waga kl
 
 $$\alpha_1 = \frac{1}{2} \log \frac{1 - 0.2}{0.2} = \frac{1}{2} \log 4 = 0.69315 $$
 
-**2.4. Akutalizacja wartości wag**
+**2.4. Akutalizacja wartości wag obserwacji**
 
 $$w_i = w_ie^{-\alpha_m y_i G_m(x_i)}, i = 1, 2, ..., N$$
 
@@ -187,7 +224,7 @@ W naszym przykładzie, wagi poprawnie oraz błędnie sklasyfikowanych obserwacji
 |  8 | -1.0634 |  0.1899 |   1 |     0.05 |      1 |
 |  9 |  2.1997 |  0.3881 |  -1 |     0.05 |     -1 |
 
-**2.5. Normalizacja wag**
+**2.5. Normalizacja wag obserwacji**
 
 $$w_i = \frac{w_i}{\sum_{i=1}^{N} w_i}, i = 1, 2, ..., N$$
 
